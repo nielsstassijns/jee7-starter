@@ -10,32 +10,33 @@ import org.junit.Test;
 import com.realdolmen.course.utilities.persistence.JpaPersistenceTest;
 
 public class TweetDBPersistenceTest extends JpaPersistenceTest{
-	
-	@Test
-	public void tweetCanBeRetrieved() throws Exception {
-		EntityManager em = entityManager();
-		TweetDB tweet = em.find(TweetDB.class, 1000L);
-		assertEquals("Blablabla", tweet.getMessage());
-		assertEquals("Jimi", tweet.getUsername());
-	}
+
 	
 	@Test
 	public void tweetCanBePersisted() throws Exception {
 		EntityManager em = entityManager();
-		TweetDB d = new TweetDB("Blebleble","Ringo",Status.ACTIVE);
+		Tag tagOne = new Tag("newTag1");
+		Tag tagTwo = new Tag("newTag2");
+		List<Tag> tagsList = new ArrayList<Tag>();
+		tagsList.add(tagOne);
+		tagsList.add(tagTwo);
+		Person p = new Person("Ringo","Starr","test123","ringo@ringo.com");
+		TweetDB d = new TweetDB("New tweet by ringo",p,tagsList,Status.ACTIVE);
 		em.persist(d);
 	}
 	
 	@Test
-	public void tweetCanBePersistedWithTags() throws Exception {
+	public void testBiDirectional() throws Exception {
 		EntityManager em = entityManager();
-		List<String> tagsList = new ArrayList<String>();
-		tagsList.add("tag 1");
-		tagsList.add("tag 2");
-		tagsList.add("tag 3");
-		TweetDB d = new TweetDB("Blobloblo","John",tagsList,Status.ACTIVE);
-		em.persist(d);
-		em.flush();
-	}
-
+		TweetDB tweet = em.find(TweetDB.class, 1000L);
+		tweet.addTag(em.find(Tag.class, 2000L));
+		em.merge(tweet);
+		Tag tag	= em.find(Tag.class, 2000L);
+		List<TweetDB> tweets = tag.getTweets();
+		for(TweetDB t:tweets){
+			if(t.getId().equals(1000L)){
+				System.out.println("Joepie!");
+			}
+		}
+	}	
 }

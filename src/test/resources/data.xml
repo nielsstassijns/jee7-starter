@@ -1,8 +1,15 @@
 <dataset>
     <person id="1000" firstName="John" lastName="Doe"/>
     <person id="2000" firstName="Jane" lastName="Doe"/>
+    <person id="3000" firstName="Ringo" lastName="Starr"/>
     
-    <tweetdb id="1000" message="Blablabla" username="Jimi"/>
-    <tweetdb id="2000" message="Blublublu" username="Paul"/>
-    <tweetdb id="3000" message="Bliblibli" username="George"/>
+    <tag id="1000" name="tagOne"/>
+    <tag id="2000" name="tagTwo"/>
+    
+    <tweetDB id="1000" person_fk="3000" message="New tweet by Ringo"/>
+    <tweetDB id="2000" person_fk="3000" message="Another tweet by Ringo"/>
+    
+    <jnd_tweet_tag tag_fk="1000" tweet_fk="1000"/>
+    <jnd_tweet_tag tag_fk="2000" tweet_fk="1000"/>
+    
 </dataset>

@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CollectionTable;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
@@ -22,59 +25,42 @@ public class TweetDB {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 	private String message;
-	private String username;
-	@ElementCollection
-	@CollectionTable(name = "Tags")  
-	@Column(name = "Value")
-	private List<String> tags = new ArrayList<String>();
+	
+	@ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST})  
+	@JoinColumn(name = "person_fk")
+	private Person user;
+	
+	@ManyToMany(cascade = {CascadeType.PERSIST})
+	@JoinTable(name = "jnd_tweet_tag",  joinColumns = @JoinColumn(name = "tag_fk"),  
+	inverseJoinColumns = @JoinColumn(name = "tweet_fk")) 
+	private List<Tag> tags = new ArrayList<Tag>();
+	
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date date;
 	@Enumerated(EnumType.STRING)
 	private Status status;
 	
 	
-	protected TweetDB() {
+	
+	public TweetDB() {
 		super();
 	}
 
 
 
-	public TweetDB(String message, String username, List<String> tags, Status status) {
+	public TweetDB(String message, Person user,List<Tag> tags, Status status) {
 		super();
 		this.message = message;
-		this.username = username;
-		this.tags.addAll(tags);
+		this.user = user;
 		this.status = status;
-	}
-
-
-
-	public TweetDB(String message, String username, Status status) {
-		super();
-		this.message = message;
-		this.username = username;
-		this.status = status;
+		this.tags = tags;
 		date = new Date();
 	}
 
 
-
-	public TweetDB(Long id, String message, String username) {
-		super();
-		this.id = id;
-		this.message = message;
-		this.username = username;
-		date = new Date();
-	}
 
 	public Long getId() {
 		return id;
-	}
-
-
-
-	public void setId(Long id) {
-		this.id = id;
 	}
 
 
@@ -91,28 +77,26 @@ public class TweetDB {
 
 
 
-	public String getUsername() {
-		return username;
+	public Person getUser() {
+		return user;
 	}
 
 
 
-	public void setUsername(String username) {
-		this.username = username;
+	public void setUser(Person user) {
+		this.user = user;
 	}
 
 
 
-	public List<String> getTags() {
+	public List<Tag> getTags() {
 		return tags;
 	}
 
-
-
-	public void setTags(List<String> tags) {
-		this.tags = tags;
+	public void addTag(Tag tag){
+		this.tags.add(tag);
+		tag.addTweet(this);
 	}
-
 
 
 	public Date getDate() {
@@ -136,9 +120,5 @@ public class TweetDB {
 	public void setStatus(Status status) {
 		this.status = status;
 	}
-	
-	
-
-	
 	
 }
