@@ -1,4 +1,8 @@
 <dataset>
     <person id="1000" firstName="John" lastName="Doe"/>
     <person id="2000" firstName="Jane" lastName="Doe"/>
+    
+    <tweetdb id="1000" message="Blablabla" username="Jimi"/>
+    <tweetdb id="2000" message="Blublublu" username="Paul"/>
+    <tweetdb id="3000" message="Bliblibli" username="George"/>
 </dataset>
